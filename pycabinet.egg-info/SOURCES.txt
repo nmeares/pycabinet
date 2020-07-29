@@ -1,8 +1,0 @@
-README.md
-setup.py
-pycabinet/__init__.py
-pycabinet/test.py
-pycabinet.egg-info/PKG-INFO
-pycabinet.egg-info/SOURCES.txt
-pycabinet.egg-info/dependency_links.txt
-pycabinet.egg-info/top_level.txt

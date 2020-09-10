@@ -1,7 +1,9 @@
 import pycabinet as pc
 
-cabinet = pc.cabinet(r'\\NAS\Hard Drive\dev\db\identifiers')
+cabinet = pc.cabinet(r'/Users/Nick/Downloads')
 
 files = cabinet.files()
 
-print(files['.db'])
+x = files['.dmg']
+
+print(files['0'])

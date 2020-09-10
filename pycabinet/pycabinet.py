@@ -3,6 +3,38 @@ import os, fnmatch, copy
 # Cabinet object class
 class cabinet:
     """# Cabinet object
+        Returns cabinet object from directory path. Allows for stacked searching and slicing of directory items. 
+        
+        Attributes:
+        ----------
+            path : str
+                Directory path
+            item : str {'cabinet', 'file', 'folder'}
+                Type of cobinet object return. File and folder return pre-filtered object.
+            full_path : bool
+                
+        
+        Parameters:
+        ----------
+            path(str)
+                Directory path.
+            item(str) {'cabinet', 'file', 'folder'}
+                Type of cabinet object to return.
+            full_path(bool)
+                Select whether full paths are returned.
+            
+        ## Returns
+        ----------
+            cls
+                Returns cabinet class object
+        
+        
+        ### Example:
+            >>> cabinet = pc.cabinet(r'/Users/Nick/downloads')
+            >>> print(cabinet['.dmg'])
+            
+        
+        
     """  
 
     def __init__(self, path: str, item='cabinet', full_path=False):

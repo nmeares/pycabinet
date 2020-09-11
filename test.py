@@ -1,9 +1,9 @@
 import pycabinet as pc
 
-cabinet = pc.cabinet(r'/Users/Nick/Downloads')
+cabinet = pc.cabinet(r'/mnt/c/users/nickm/Downloads')
 
 files = cabinet.files()
 
-x = files['.dmg']
+x = files['.zip']
 
-print(files['0'])
+print(x[5:8])

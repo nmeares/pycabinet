@@ -1,54 +1,123 @@
 import os, fnmatch, copy
 
-#TODO: move inner cabinet class out/ file and folder functions inside. _cabinet becomes main class.
-
 # Cabinet object class
 class cabinet:
-    def __init__(self, path: str):
-        self.path = path
+    """# Cabinet object
+        Returns cabinet object from directory path. Allows for stacked searching and slicing of directory items. 
+        
+        Attributes:
+        ----------
+            root : str
+                Directory root path
+            instance : str {'cabinet', 'file', 'folder'} , optional
+                Type of cabinet object return. File and folder return pre-filtered object.
+            full_path : bool
+                True if file/folder names with root path to be returned, False if only name to be returned.
+                
+        Methods:
+        ----------
+            folders(full_path=False):
+                Returns cabinet object pre-filtered for folders. Equivalent to setting instance = 'folder'
+            
+            files(full_path=False):
+                Returns cabinet object pre-filtered for folders. Equivalent to setting instance = 'file'
+                
+            latest():
+                Returns latest file or folder by modified date
+    """  
+    def __init__(self, path: str, instance='cabinet', full_path=False):
+        """ Constructs all attributes for the cabinet object.
+        Parameters:
+        ----------
+            path: str
+                Directory path.
+            item : str {'cabinet', 'file', 'folder'}
+                Type of cabinet object to return.
+            `full_path` : bool
+                Select whether full paths are returned.
+            
+        Returns:
+        ----------
+            Object
+                Returns cabinet class object
+        
+        Example:
+        ----------
+            >>> cabinet = pc.cabinet(r'/Users/Nick/downloads')
+            >>> print(cabinet['.zip'])
+            >>> ['ParquetViewer_v1.1.0.0.zip', 'SQLiteStudio-3.2.1.zip']
+        """
+        self.root = path
+        self.instance = instance
+        self.full_path = full_path
+        self._index = None
+        self._inherited = None
+        
+    def __str__(self): return str(self._list)
+
+    def __iter__(self): return iter(self._list)
+
+    def __getitem__(self, index):
+        # Create deepcopy of cabinet object to be returned
+        new = copy.deepcopy(self)
+        new._index = index
+        # Indexed list stored in inherited attribute to allow for recursive indexing
+        new._inherited = new._indexed(new._list, new._index)
+        return new
+    
+    @property
+    def _list(self):
+        # Use inherited cabinet list or create new one
+        if self._inherited is None:
+            # Init file list
+            file_list = os.listdir(self.root)
+            
+            if self.instance=='file':
+                file_list = self._listis(file_list, os.path.isfile)
+            elif self.instance=='folder':
+                file_list = self._listis(file_list, os.path.isdir)
+            else: pass # return complete dir list
+            
+        else: file_list = self._inherited
+
+        # Append full path
+        if self.full_path is True:
+            file_list = self._join_path(file_list)
+        else: pass
+
+        return file_list
+
+    def _listis(self, lst, func):
+        check = lambda filename: func(self._join_path(filename)) 
+        return list(filter(check, lst))
+
+    def _join_path(self, item):
+        try:
+            if isinstance(item, list):
+                return list(map(self._join_path, item))
+            elif isinstance(item, str):
+                return os.path.join(self.root, item)
+        except TypeError: return None
+         
+    def _filter(self, lst, search_string):
+        return fnmatch.filter(lst, "*" + search_string + "*")
+
+    def _indexed(self, lst, idx):
+        if isinstance(idx, (int, slice)): 
+            try: return lst[idx]
+            except IndexError: return None
+        elif isinstance(idx, str):
+            try: return self._filter(lst, idx)
+            except IndexError: return None
+
+
+    @property
+    def latest(self):
+        lst = self._join_path(self._list)
+        return os.path.basename(max(lst, key=os.path.getctime, default="None"))
 
     def files(self, full_path=False):
-        return self._cabinet(self, 'file', full_path)
+        return cabinet(self.root, 'file', full_path)
 
     def folders(self, full_path=False):
-        return self._cabinet(self, 'folder', full_path)
-
-    class _cabinet:
-        def __init__(self, cabinet, item='cabinet', full_path=False):
-            self.path = cabinet.path
-            self.item = item
-            self.full_path = full_path
-            self.all = self._list()
-            
-        def __str__(self): return str(self.all)
-
-        def __iter__(self): return iter(self.all)
-
-        def __getitem__(self, index):
-            if type(index) == int: 
-                try: return self.all[index]
-                except IndexError: return None
-            else:
-                new = copy.deepcopy(self)
-                new.all = [f for f in self.all if fnmatch.fnmatch(f, "*" + index + "*")==True]
-                return new
-
-        def _list(self):
-            # Init file list
-            if self.item=='file':
-                file_list = [f for f in os.listdir(self.path) if os.path.isfile(os.path.join(self.path,f))]
-            elif self.item=='folder':
-                file_list = [f for f in os.listdir(self.path) if os.path.isdir(os.path.join(self.path,f))]
-            else:
-                file_list = os.listdir(self.path)
-
-            # Add full path
-            if self.full_path is True:
-                file_list = [os.path.join(self.path, filename) for filename in file_list]
-            else: pass
-            return file_list
-
-        @property
-        def latest(self):
-            lst = [os.path.join(self.path, filename) for filename in self.all]
-            return os.path.basename(max(lst, key=os.path.getctime, default="None"))
+        return cabinet(self.root, 'folder', full_path)

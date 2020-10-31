@@ -106,3 +106,6 @@ venv.bak/
 # User config files
 config.json
 config.ini
+
+# vscode
+.vscode

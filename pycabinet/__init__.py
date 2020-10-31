@@ -4,4 +4,4 @@
 __version__ = "0.0.1"
 
 # Imports
-import pycabinet
+from .pycabinet import *

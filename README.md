@@ -1,5 +1,5 @@
 # PyCabinet
----
+
 A simple tool for file path management and searching. The creation of a cabinet object from a file path allows the user to easily filter, index and slice the contents of any directory and retrieve the full file path.
 
 

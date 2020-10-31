@@ -7,6 +7,13 @@ The initial plan is to keep PyCabinet doing a simple job; allow users to find fi
 
 Users of pandas should be familiar with the framework for filtering/slicing.
 
+### How to Install
+
+```bash
+pip install pycabinet
+```
+
+
 ### Examples
 ---
 ```python 

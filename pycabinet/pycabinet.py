@@ -11,7 +11,7 @@ class cabinet:
                 Directory root path
             instance : str {'cabinet', 'file', 'folder'} , optional
                 Type of cabinet object return. File and folder return pre-filtered object.
-            full_path : bool 
+            full_path : bool
                 True if file/folder names with root path to be returned, False if only name to be returned.
                 
         Methods:
@@ -33,7 +33,7 @@ class cabinet:
                 Directory path.
             item : str {'cabinet', 'file', 'folder'}
                 Type of cabinet object to return.
-            full_path : bool
+            `full_path` : bool
                 Select whether full paths are returned.
             
         Returns:

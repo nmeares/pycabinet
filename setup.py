@@ -10,7 +10,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="pycabinet",
-    version="0.0.2",
+    version="1.0.0",
     long_description=README,
     long_description_content_type="text/markdown",
     packages=["pycabinet"]

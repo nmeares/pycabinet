@@ -45,7 +45,7 @@ class cabinet:
         ----------
             >>> cabinet = pc.cabinet(r'/Users/Nick/downloads')
             >>> print(cabinet['.zip'])
-            >>> ['ParquetViewer_v1.1.0.0.zip', 'SQLiteStudio-3.2.1.zip']
+            ['ParquetViewer_v1.1.0.0.zip', 'SQLiteStudio-3.2.1.zip']
         """
         self.root = path
         self.instance = instance
@@ -60,7 +60,7 @@ class cabinet:
     def __getitem__(self, index):
         # Create deepcopy of cabinet object to be returned
         new = copy.deepcopy(self)
-        new._index = index
+        new._index = index # Store index in new object
         # Indexed list stored in inherited attribute to allow for recursive indexing
         new._inherited = new._indexed(new._list, new._index)
         return new
@@ -71,7 +71,7 @@ class cabinet:
         if self._inherited is None:
             # Init file list
             file_list = os.listdir(self.root)
-            
+            # Return list based on cabinet sub-type
             if self.instance=='file':
                 file_list = self._listis(file_list, os.path.isfile)
             elif self.instance=='folder':
@@ -88,7 +88,9 @@ class cabinet:
         return file_list
 
     def _listis(self, lst, func):
-        check = lambda filename: func(self._join_path(filename)) 
+        # Create function apply os.path 'is' function to file path - return bool
+        check = lambda filename: func(self._join_path(filename))
+        # Return filtered list (using boolean mask)
         return list(filter(check, lst))
 
     def _join_path(self, item):
@@ -100,9 +102,11 @@ class cabinet:
         except TypeError: return None
          
     def _filter(self, lst, search_string):
+        # Built in string filter function
         return fnmatch.filter(lst, "*" + search_string + "*")
 
     def _indexed(self, lst, idx):
+        # Index object based on type
         if isinstance(idx, (int, slice)): 
             try: return lst[idx]
             except IndexError: return None
@@ -113,9 +117,11 @@ class cabinet:
 
     @property
     def latest(self):
+        # Allows user to retrieve latest file based on created time
         lst = self._join_path(self._list)
         return os.path.basename(max(lst, key=os.path.getctime, default="None"))
 
+    # Cabinet type functions (alternative to using the function param)
     def files(self, full_path=False):
         return cabinet(self.root, 'file', full_path)
 
